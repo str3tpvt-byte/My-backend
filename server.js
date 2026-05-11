@@ -38,17 +38,45 @@ app.post("/users", (req, res) => {
     return res.status(400).json({ error: "Name is required" });
   }
 
+  user.id = users.length + 1;
   users.push(user);
 
   res.status(201).json({
-    message: "User added successfully",
-    user,
+    message: "User created successfully",
+    user: user,
   });
 });
 
 /**
- * START SERVER
+ * GET user by ID
  */
+app.get("/users/:id", (req, res) => {
+  const id = parseInt(req.params.id);
+  const user = users.find((u) => u.id === id);
+
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
+  }
+
+  res.json(user);
+});
+
+/**
+ * DELETE user
+ */
+app.delete("/users/:id", (req, res) => {
+  const id = parseInt(req.params.id);
+  const index = users.findIndex((u) => u.id === id);
+
+  if (index === -1) {
+    return res.status(404).json({ error: "User not found" });
+  }
+
+  users.splice(index, 1);
+  res.json({ message: "User deleted successfully" });
+});
+
+// Start server
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
